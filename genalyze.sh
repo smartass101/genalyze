@@ -20,6 +20,7 @@ if [ -f "/usr/bin/equery" ] ; then
 else 
     echo ">>> please run ('emerge app-portage/gentoolkit') as root you will also benefit from the tools like equery or revdep-rebuild, others will ask you to emerge them anyways"
 fi
+
 OUT_TMP="/tmp/troubleshoot_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
 
 2>>$OUT_TMP #redirect stderr to the file (like 'command not found')
@@ -72,14 +73,14 @@ function query
     echo "MODULE---------------<<: ${1} :>>-----------------" >> $OUT_TMP
     echo ":::QUERY: ${2}
     " >> $OUT_TMP
-    $REPLY >> $OUT_TMP
+    echo $REPLY >> $OUT_TMP
     echo "
 
 
     " >> $OUT_TMP
 }
     
-#here come all the modules
+#--------<< MODULE LISTING >>-------
 
 analyze "RC Run Level Settings" "rc-status"
 # analyze "Window Manager info" "qlist -IC x11-wm" #this tools isn't standard
@@ -103,9 +104,27 @@ analyze_opt "Routing Tables" "route"
 analyze_opt "DNS Servers" "cat /etc/resolv.conf"
 
 
-# at last, let's upload the info
-wgetpaste $OUT_TMP
+echo ">>> your system info is at ${OUT_TMP}"
 
-echo "your system info is at ${OUT_TMP}"
+#-------<< ENDING SEQUENCE >>-----
+while true ; do
+    read -p ">>> What do you want to do now? 
+    [u]pload system info file through wgetpaste
+    [r]ead the file with 'less'
+    [e]xit
+    ANSWER: type 'u' or 'r' or 'e' :  "
+    case $REPLY in
+        u)
+            wgetpaste $OUT_TMP;;
+        r)
+            less $OUT_TMP;;
+        e)
+            echo "    >>> Thank you for your cooperation :) <<<<   "
+            break;;
+        *)
+            echo "couldn't understand you, try again";;
+    esac
+done
+
 exit 0
 
