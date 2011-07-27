@@ -1,0 +1,8 @@
+#ideas collected at #genalyze
+mingdao:
+    http://koltsoff.com/pub/ures/ 
+        nice memory analysis utility in python. as everyone has python thanks to portage,
+        that istn't a problem, but having a scipt bundle will be better when genalyze is in portage
+    awk '/run/ && /script/ { print }' irclogs/#gentoo.log
+        log the #gentoo chan and look for cases of people using this script
+
