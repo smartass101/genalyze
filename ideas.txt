@@ -5,4 +5,7 @@ mingdao:
         that istn't a problem, but having a scipt bundle will be better when genalyze is in portage
     awk '/run/ && /script/ { print }' irclogs/#gentoo.log
         log the #gentoo chan and look for cases of people using this script
+godmachine-x6
+    http://bobshaffer.net/?section=project_noobjuice_viewer
+        noobjuice maybe some inspiration
 

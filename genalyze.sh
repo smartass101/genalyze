@@ -21,7 +21,7 @@ else
     echo ">>> please run ('emerge app-portage/gentoolkit') as root you will also benefit from the tools like equery or revdep-rebuild, others will ask you to emerge them anyways"
 fi
 
-OUT_TMP="/tmp/troubleshoot_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
+OUT_TMP="/tmp/genalyze_output_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
 
 2>>$OUT_TMP #redirect stderr to the file (like 'command not found')
 
@@ -30,8 +30,8 @@ OUT_TMP="/tmp/troubleshoot_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be
 #this function takes two arguments: analyze(comment_on_the_module, command_to_generate_desired_output)
 function analyze 
 {
-    echo "MODULE---------------<<: ${1} :>>-----------------" >> $OUT_TMP
-    echo "::::command run: ${2}
+    echo "############################## ${1} ##############################" >> $OUT_TMP
+    echo "--->>>command executed: ${2}
     " >> $OUT_TMP
     $2 >> $OUT_TMP
     echo "
