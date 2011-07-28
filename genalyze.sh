@@ -127,13 +127,30 @@ while [ $# -gt 0 ] ; do
             "
             echo "Options:"
             echo "-h, --help                            Display this message and exit"
-            echo "-n, --non-interactive                 Do not ask question, assume default values"
+            echo "-n, --non-interactive                 Do not ask questions, assume default values"
             echo "-o, --omit <module_identifiers>       Do not execute specified modules"
             echo "-w, --with-only <module_identifiers>  Execute explicitly only these modules"
             echo "-d, --no-upload                       Do not upload the file with information"
-            echo "-r,--read-only                        Only display the file with information"
-            echo "-l,--list                             List available modules and exit"
+            echo "-r, --read-only                        Only display the file with information"
+            echo "-l, --list                             List available modules and exit"
             exit 0;;
+        -n|--non-interactive)
+            INTERACTIVE=0;;
+        -d|--no-upload)
+            UPLOAD=0;;
+        -r|--read-only)
+            READONLY=1;;
+        -l|--list)
+            list_array=( ${analyze_array[@]} ${analyze_opt_array[@]} ${query_array[@]} )
+            echo -e "<module identifier>\t\t\t<module description>\t\t\t<command executed by module>"
+            for mod in ${list_array[@]} ; do
+                eval name=\${\!$mod[@]} 
+                eval command=\${$mod[@]}
+                echo -e "${mod}\t\t\t${name}\t\t\t${command}"
+            done
+            exit 0;;
+            
+        
         
         *)
             echo ">>> unknown option, try --help"
