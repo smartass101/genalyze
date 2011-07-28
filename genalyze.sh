@@ -48,8 +48,8 @@ function analyze_opt
 command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
         case ${REPLY} in
             y) 
-                echo "MODULE---------------<<: ${1} :>>-----------------" >> $OUT_TMP
-                echo "::::command run: ${2}
+                echo "############################## ${1} ##############################" >> $OUT_TMP
+                echo "--->>>command executed: ${2}
                 " >> $OUT_TMP
                 $2 >> $OUT_TMP
                 echo "
@@ -81,24 +81,24 @@ function query
 }
     
 #--------<< MODULE LISTING >>-------
-
+# please use capitalised module naming, and no abbreviations please
 analyze "RC Run Level Settings" "rc-status"
 # analyze "Window Manager info" "qlist -IC x11-wm" #this tools isn't standard
-analyze "fstab settings" "cat /etc/fstab"
+analyze "Fstab Settings" "cat /etc/fstab"
 analyze_opt "Disk Usage & Statistics" "df -hT"
-analyze "Settings from make.conf" "cat /etc/make.conf"
-analyze "portage info" "emerge --info"
-analyze "What portage profile is used" "eselect profile list"
-analyze "What kernel is used" "eselect kernel list"
-analyze "PCI hardware" "lspci -k"
-analyze "Loaded Modules" "lsmod"
-analyze "DBUS rules" "ls -1 /etc/udev/rules.d/"
-analyze "Is dbus-session set" "echo ${DBUS_SESSION_BUS_ADDRESS}"
-analyze "Is consolekit set" "ck-list-sessions"
+analyze "Settings from /etc/make.conf" "cat /etc/make.conf"
+analyze "General Portage Information" "emerge --info"
+analyze "Display of Portage Profiles" "eselect profile list"
+analyze "Kernel in use" "eselect kernel list"
+analyze "PCI Hardware" "lspci -k"
+analyze "Modules Currently Loaded" "lsmod"
+analyze "DBUS Rules" "ls -1 /etc/udev/rules.d/"
+analyze "DBUS-session Information" "echo ${DBUS_SESSION_BUS_ADDRESS}"
+analyze "Consolekit-session Information" "ck-list-sessions"
 query "WM/DE info" "what Desktop environment and/or Window manager are you using"
 analyze_opt "Exported shell variables" "export"
-analyze "username" "echo ${USER}"
-analyze "hostname" "echo ${HOSTNAME}"
+analyze "Username" "echo ${USER}"
+analyze "Hostname" "echo ${HOSTNAME}"
 analyze_opt "Network status" "ifconfig"
 analyze_opt "Routing Tables" "route"
 analyze_opt "DNS Servers" "cat /etc/resolv.conf"
@@ -111,14 +111,14 @@ while true ; do
     read -p ">>> What do you want to do now? 
     [u]pload system info file through wgetpaste
     [r]ead the file with 'less'
-    [e]xit
-    ANSWER: type 'u' or 'r' or 'e' :  "
+    [q]uit
+    ANSWER: type 'u' or 'r' or 'q' :  "
     case $REPLY in
         u)
             wgetpaste $OUT_TMP;;
         r)
             less $OUT_TMP;;
-        e)
+        q)
             echo "    >>> Thank you for your cooperation :) <<<<   "
             break;;
         *)
