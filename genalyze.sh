@@ -117,7 +117,23 @@ query_array=(wm)
 
 ##########################<< COMMAND LINE OPTIONS PROCESSING >>#######################
 
-while 
+while [ $# -gt 0 ] ; do
+    case $1 in
+        -h|--help)
+            echo "This bash script gathers information about your system and (optionally)"
+            echo "uploads it through wgetpaste. It is intended for support purposes on the"
+            echo "#gentoo IRC support channel."
+            echo ">>> usage: "
+            echo "    [bash] genalyze.sh [-h|--help] [-n|--non-interactive] [-o|--omit <module_identifiers>]"
+            echo "                       [-w|--with-only  <module_identifiers>] [-d|--no-upload]"
+            echo "                       [-r|--read-only] "
+            exit 0;;
+        
+        *)
+            echo ">>> unknown option, try --help"
+            exit 1;;
+    esac
+done
 
 ##################################<<MODULE EXECUTION>>##############################3
 #loops over class arrays and executes functions
