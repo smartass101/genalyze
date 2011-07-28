@@ -25,7 +25,7 @@ OUT_TMP="/tmp/genalyze_output_$(date +%d%m%y_%H%M%S).txt" #the temporary file to
 
 2>>$OUT_TMP #redirect stderr to the file (like 'command not found')
 
-#-----------<< MODULE CLASSES (well, just bash functions,really) >>---------
+######################<< MODULE CLASSES (well, just bash functions,really) >>##############
 
 #this function takes two arguments: analyze(comment_on_the_module, command_to_generate_desired_output)
 function analyze 
@@ -70,8 +70,8 @@ command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
 function query
 {
     read -p "PLEASE ANSWER (type,then press ENTER): ${2} ?  "
-    echo "MODULE---------------<<: ${1} :>>-----------------" >> $OUT_TMP
-    echo ":::QUERY: ${2}
+    echo "############################## ${1} ##############################" >> $OUT_TMP
+    echo "--->>> question asked: ${2}
     " >> $OUT_TMP
     echo $REPLY >> $OUT_TMP
     echo "
@@ -80,33 +80,66 @@ function query
     " >> $OUT_TMP
 }
     
-#--------<< MODULE LISTING >>-------
-# please use capitalised module naming, and no abbreviations please
-analyze "RC Run Level Settings" "rc-status"
-# analyze "Window Manager info" "qlist -IC x11-wm" #this tools isn't standard
-analyze "Fstab Settings" "cat /etc/fstab"
-analyze_opt "Disk Usage & Statistics" "df -hT"
-analyze "Settings from /etc/make.conf" "cat /etc/make.conf"
-analyze "General Portage Information" "emerge --info"
-analyze "Display of Portage Profiles" "eselect profile list"
-analyze "Kernel in use" "eselect kernel list"
-analyze "PCI Hardware" "lspci -k"
-analyze "Modules Currently Loaded" "lsmod"
-analyze "DBUS Rules" "ls -1 /etc/udev/rules.d/"
-analyze "DBUS-session Information" "echo ${DBUS_SESSION_BUS_ADDRESS}"
-analyze "Consolekit-session Information" "ck-list-sessions"
-query "WM/DE info" "what Desktop environment and/or Window manager are you using"
-analyze_opt "Exported shell variables" "export"
-analyze "Username" "echo ${USER}"
-analyze "Hostname" "echo ${HOSTNAME}"
-analyze_opt "Network status" "ifconfig"
-analyze_opt "Routing Tables" "route"
-analyze_opt "DNS Servers" "cat /etc/resolv.conf"
+###############################<< MODULE DECLARATION >>################################
+
+# format: declare -A module_identifier=( ["module name to be displayed"]="command to be executed") 
+# module_identifier: short, no whitespace (is used for referencing)
+# module name: capitalised module naming, and no abbreviations please, should be understandable for everyone
 
 
+declare -A rc_status=( ["RC Run Level Settings"]="rc-status")
+declare -A fstab=(["Fstab Settings"]="cat /etc/fstab")
+declare -A du=(["Disk Usage & Statistics"]="df -hT")
+declare -A makeconf=(["Settings from /etc/make.conf"]="cat /etc/make.conf")
+declare -A portage=(["General Portage Information"]="emerge --info")
+declare -A profiles=(["Display of Portage Profiles"]="eselect profile list")
+declare -A kernel=(["Kernel in use"]="eselect kernel list")
+declare -A hardware=(["PCI Hardware"]="lspci -k")
+declare -A modules=(["Modules Currently Loaded"]="lsmod")
+declare -A udev=(["UDEV Rules"]="ls -1 /etc/udev/rules.d/")
+declare -A dbus=(["DBUS-session Information"]="echo ${DBUS_SESSION_BUS_ADDRESS}")
+declare -A consolekit=(["Consolekit-session Information"]="ck-list-sessions")
+declare -A wm=(["Window Manager / Desktop Environment Information"]="what Desktop environment and/or Window manager are you using")
+declare -A exported=(["Exported shell variables"]="export")
+declare -A username=(["Username"]="echo ${USER}")
+declare -A hostname=(["Hostname"]="echo ${HOSTNAME}")
+declare -A ifconfig=(["Network status"]="ifconfig")
+declare -A route=(["Routing Tables"]="route")
+declare -A dns=(["DNS Servers"]="cat /etc/resolv.conf")
+
+
+#######################################<<MODULE ARRAYS>>################################
+#format: class_array=( module_identifier_1 module_identifier_2 .. )
+analyze_array=(rc_status fstab du makeconf portage profiles kernel pci modules udev dbus consolekit username hostname)
+analyze_opt_array=(exported ifconfig route dns)
+query_array=(wm)
+
+
+##################################<<MODULE EXECUTION>>##############################3
+#loops over class arrays and executes functions
+
+#analyze()
+for mod in ${analyze_array[@]}; do
+    eval name=\${\!$mod[@]} 
+    eval command=\${$mod[@]}
+    analyze "${name}" "${command}"
+done
+#analyze_opt()
+for mod in ${analyze_opt_array[@]}; do
+    eval name=\${\!$mod[@]} 
+    eval command=\${$mod[@]}
+    analyze_opt "${name}" "${command}"
+done
+#query()
+for mod in ${query_array[@]}; do
+    eval name=\${\!$mod[@]} 
+    eval command=\${$mod[@]}
+    query "${name}" "${command}"
+done
+
+########################<<ENDING SEQUENCE>>#############################
 echo ">>> your system info is at ${OUT_TMP}"
 
-#-------<< ENDING SEQUENCE >>-----
 while true ; do
     read -p ">>> What do you want to do now? 
     [u]pload system info file through wgetpaste
