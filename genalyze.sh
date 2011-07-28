@@ -21,7 +21,7 @@ function analyze
 {
     echo "############################## ${1} ##############################" >> $OUT_TMP
     echo -e "--->>>command executed: ${2}\n" >> $OUT_TMP
-    $2 >> $OUT_TMP 2>$OUT_TMP
+    $2 >> $OUT_TMP 2>>$OUT_TMP
     echo -e "\n\n" >> $OUT_TMP
 }
 
@@ -35,7 +35,7 @@ command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
             y) 
                 echo "############################## ${1} ##############################" >> $OUT_TMP
                 echo -e "--->>>command executed: ${2}\n" >> $OUT_TMP
-                $2 >> $OUT_TMP 2>$OUT_TMP
+                $2 >> $OUT_TMP 2>>$OUT_TMP
                 echo -e "\n\n" >> $OUT_TMP
                 break;;
             n)
