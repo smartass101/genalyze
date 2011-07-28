@@ -5,7 +5,8 @@
 # this script is perfectly safe if run as normal user, you may need to be root
 # to emerge wgetpaste though 
 
- 
+echo ">>> Starting the genalyze script, collecting system information ..." 
+
 PATH="${PATH}:/usr/sbin:/sbin" #this is needed for utils like lspci
 
 
