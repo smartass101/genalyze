@@ -126,7 +126,7 @@ while [ $# -gt 0 ] ; do
             echo ">>> usage: "
             echo "    [bash] genalyze.sh [-h|--help] [-n|--non-interactive] [-o|--omit <module_identifiers>]"
             echo "                       [-w|--with-only  <module_identifiers>] [-d|--no-upload]"
-            echo "                       [-r|--read-only] "
+            echo "                       [-r|--read-only] [-l|--list]"
             exit 0;;
         
         *)
