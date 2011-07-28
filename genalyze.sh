@@ -82,7 +82,7 @@ function query
     
 ###############################<< MODULE DECLARATION >>################################
 
-# format: declare -A module_identifier=( ["module name to be displayed"]="command to be executed") 
+# format: declare -A module_identifier=( ["module name to be displayed"]="command to be executed/question to be asked") 
 # module_identifier: short, no whitespace (is used for referencing)
 # module name: capitalised module naming, and no abbreviations please, should be understandable for everyone
 
@@ -110,10 +110,14 @@ declare -A dns=(["DNS Servers"]="cat /etc/resolv.conf")
 
 #######################################<<MODULE ARRAYS>>################################
 #format: class_array=( module_identifier_1 module_identifier_2 .. )
-analyze_array=(rc_status fstab du makeconf portage profiles kernel pci modules udev dbus consolekit username hostname)
+analyze_array=(rc_status fstab du makeconf portage profiles kernel hardware modules udev dbus consolekit username hostname)
 analyze_opt_array=(exported ifconfig route dns)
 query_array=(wm)
 
+
+##########################<< COMMAND LINE OPTIONS PROCESSING >>#######################
+
+while 
 
 ##################################<<MODULE EXECUTION>>##############################3
 #loops over class arrays and executes functions
