@@ -120,13 +120,19 @@ query_array=(wm)
 while [ $# -gt 0 ] ; do
     case $1 in
         -h|--help)
-            echo "This bash script gathers information about your system and (optionally)"
-            echo "uploads it through wgetpaste. It is intended for support purposes on the"
-            echo "#gentoo IRC support channel."
-            echo ">>> usage: "
-            echo "    [bash] genalyze.sh [-h|--help] [-n|--non-interactive] [-o|--omit <module_identifiers>]"
-            echo "                       [-w|--with-only  <module_identifiers>] [-d|--no-upload]"
-            echo "                       [-r|--read-only] [-l|--list]"
+            echo "This bash script gathers information about your system and (optionally) uploads it"
+            echo "through wgetpaste. It is intended for support purposes on the #gentoo IRC support channel
+            "
+            echo "Usage: genalyze [options]
+            "
+            echo "Options:"
+            echo "-h, --help                            Display this message and exit"
+            echo "-n, --non-interactive                 Do not ask question, assume default values"
+            echo "-o, --omit <module_identifiers>       Do not execute specified modules"
+            echo "-w, --with-only <module_identifiers>  Execute explicitly only these modules"
+            echo "-d, --no-upload                       Do not upload the file with information"
+            echo "-r,--read-only                        Only display the file with information"
+            echo "-l,--list                             List available modules and exit"
             exit 0;;
         
         *)
