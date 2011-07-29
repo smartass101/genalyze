@@ -112,18 +112,21 @@ while [ $# -gt 0 ] ; do
             echo "-l, --list                             List available modules and exit"
             exit 0;;
         -n|--non-interactive)
-            INTERACTIVE=0;;
+            INTERACTIVE=0
+            shift;;
         -d|--no-upload)
-            UPLOAD=0;;
+            UPLOAD=0
+            shift;;
         -r|--read-only)
-            READONLY=1;;
+            READONLY=1
+            shift;;
         -l|--list)
             list_array=( ${analyze_array[@]} ${analyze_opt_array[@]} ${query_array[@]} )
             echo -e "<module identifier>\t\t\t<module description>\t\t\t<command executed by module>"
             for mod in ${list_array[@]} ; do
                 eval name=\${\!$mod[@]} 
                 eval command=\${$mod[@]}
-                echo -e "${mod}\t\t\t${name}\t\t\t${command}"
+                echo -e "${mod}\t\t\t${name}\t\t\t${command}" #TODO make a table layout
             done
             exit 0;;
             
@@ -160,24 +163,31 @@ done
 ########################<<ENDING SEQUENCE>>#############################
 echo ">>> your system info is at ${OUT_TMP}"
 
-while true ; do
-    read -p ">>> What do you want to do now? 
-    [u]pload system info file through wgetpaste
-    [r]ead the file with 'less'
-    [q]uit
-    ANSWER: type 'u' or 'r' or 'q' :  "
-    case $REPLY in
-        u)
-            wgetpaste $OUT_TMP;;
-        r)
-            less $OUT_TMP;;
-        q)
-            echo "    >>> Thank you for your cooperation :) <<<<   "
-            break;;
-        *)
-            echo "couldn't understand you, try again";;
-    esac
-done
+if [ $INTERACTIVE -eq 0 ] ; then
+    wgetpaste $OUT_TMP
+    exit 0
+elif [ $READONLY -eq 1 ] ; then
+    less $OUT_TMP
+else
+    while true ; do
+        read -p ">>> What do you want to do now? 
+        [u]pload system info file through wgetpaste
+        [r]ead the file with 'less'
+        [q]uit
+        ANSWER: type 'u' or 'r' or 'q' :  "
+        case $REPLY in
+            u)
+                wgetpaste $OUT_TMP;;
+            r)
+                less $OUT_TMP;;
+            q)
+                break;;
+            *)
+                echo "couldn't understand you, try again";;
+        esac
+    done
+fi
 
+echo "    >>> Thank you for your cooperation :) <<<<   "
 exit 0
 
