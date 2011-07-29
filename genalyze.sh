@@ -112,6 +112,8 @@ while [ $# -gt 0 ] ; do
             exit 0;;
         -n|--non-interactive)
             INTERACTIVE=0
+            analyze_opt_array=()
+            query_array=()
             shift;;
         -d|--no-upload)
             UPLOAD=0
