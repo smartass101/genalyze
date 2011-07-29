@@ -59,30 +59,30 @@ function query
     
 ###############################<< MODULE DECLARATION >>################################
 
-# format: declare -A module_identifier=( ["module name to be displayed"]="command to be executed/question to be asked") 
+# format: module_identifier=( "module description " "command to be executed/question to be asked") 
 # module_identifier: short, no whitespace (is used for referencing)
-# module name: capitalised module naming, and no abbreviations please, should be understandable for everyone
+# module description: capitalised, and no abbreviations please, should be understandable for everyone
 
 
-declare -A rc_status=( ["RC Run Level Settings"]="rc-status")
-declare -A fstab=(["Fstab Settings"]="cat /etc/fstab")
-declare -A du=(["Disk Usage & Statistics"]="df -hT")
-declare -A makeconf=(["Settings from /etc/make.conf"]="cat /etc/make.conf")
-declare -A portage=(["General Portage Information"]="emerge --info")
-declare -A profiles=(["Display of Portage Profiles"]="eselect profile list")
-declare -A kernel=(["Kernel in use"]="eselect kernel list")
-declare -A hardware=(["PCI Hardware"]="lspci -k")
-declare -A modules=(["Modules Currently Loaded"]="lsmod")
-declare -A udev=(["UDEV Rules"]="ls -1 /etc/udev/rules.d/")
-declare -A dbus=(["DBUS-session Information"]="echo ${DBUS_SESSION_BUS_ADDRESS}")
-declare -A consolekit=(["Consolekit-session Information"]="ck-list-sessions")
-declare -A wm=(["Window Manager / Desktop Environment Information"]="what Desktop environment and/or Window manager are you using")
-declare -A exported=(["Exported shell variables"]="export")
-declare -A username=(["Username"]="echo ${USER}")
-declare -A hostname=(["Hostname"]="echo ${HOSTNAME}")
-declare -A ifconfig=(["Network status"]="ifconfig")
-declare -A route=(["Routing Tables"]="route")
-declare -A dns=(["DNS Servers"]="cat /etc/resolv.conf")
+rc_status=( "RC Run Level Settings" "rc-status")
+fstab=("Fstab Settings" "cat /etc/fstab")
+du=("Disk Usage & Statistics" "df -hT")
+makeconf=("Settings from /etc/make.conf" "cat /etc/make.conf")
+portage=("General Portage Information" "emerge --info")
+profiles=("Display of Portage Profiles" "eselect profile list")
+kernel=("Kernel in use" "eselect kernel list")
+hardware=("PCI Hardware" "lspci -k")
+modules=("Modules Currently Loaded" "lsmod")
+udev=("UDEV Rules" "ls -1 /etc/udev/rules.d/")
+dbus=("DBUS-session Information" "echo ${DBUS_SESSION_BUS_ADDRESS}")
+consolekit=("Consolekit-session Information" "ck-list-sessions")
+wm=("Window Manager / Desktop Environment Information" "what Desktop environment and/or Window manager are you using")
+exported=("Exported shell variables" "export")
+username=("Username" "echo ${USER}")
+hostname=("Hostname" "echo ${HOSTNAME}")
+ifconfig=("Network status" "ifconfig")
+route=("Routing Tables" "route")
+dns=("DNS Servers" "cat /etc/resolv.conf")
 
 
 #######################################<<MODULE ARRAYS>>################################
@@ -122,11 +122,9 @@ while [ $# -gt 0 ] ; do
             shift;;
         -l|--list)
             list_array=( ${analyze_array[@]} ${analyze_opt_array[@]} ${query_array[@]} )
-            echo -e "<module identifier>\t\t\t<module description>\t\t\t<command executed by module>"
+            echo -e "<module identifier> :: <module description> :: <command executed by module>"
             for mod in ${list_array[@]} ; do
-                eval name=\${\!$mod[@]} 
-                eval command=\${$mod[@]}
-                echo -e "${mod}\t\t\t${name}\t\t\t${command}" #TODO make a table layout
+                eval echo  ${mod} " :: " \${$mod[0]} " :: " \${$mod[1]} #TODO make a table layout
             done
             exit 0;;
             
@@ -143,20 +141,20 @@ done
 
 #analyze()
 for mod in ${analyze_array[@]}; do
-    eval name=\${\!$mod[@]} 
-    eval command=\${$mod[@]}
+    eval name=\${$mod[0]} 
+    eval command=\${$mod[1]}
     analyze "${name}" "${command}"
 done
 #analyze_opt()
 for mod in ${analyze_opt_array[@]}; do
-    eval name=\${\!$mod[@]} 
-    eval command=\${$mod[@]}
+    eval name=\${$mod[0]} 
+    eval command=\${$mod[1]}
     analyze_opt "${name}" "${command}"
 done
 #query()
 for mod in ${query_array[@]}; do
-    eval name=\${\!$mod[@]} 
-    eval command=\${$mod[@]}
+    eval name=\${$mod[0]} 
+    eval command=\${$mod[1]}
     query "${name}" "${command}"
 done
 
