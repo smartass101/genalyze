@@ -10,6 +10,8 @@ PATH="${PATH}:/usr/sbin:/sbin" #this is needed for utils like lspci
 
 
 OUT_TMP="/tmp/genalyze_output_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
+INTERACTIVE=1
+READONLY=0
 
 2>>$OUT_TMP #redirect stderr to the file (like 'command not found')
 
@@ -138,7 +140,8 @@ while [ $# -gt 0 ] ; do
                 shift
             done;;
         -o|--omit)
-            until [[ $1 =~ -.* ]] ; do
+            shift
+            until [[ $1 =~ -.* || $# -eq 0 ]] ; do
                 analyze_array=${analyze_array#$1}
                 analyze_opt_array=${analyze_array#$1}
                 query_array=${analyze_array#$1}
