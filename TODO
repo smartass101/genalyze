@@ -1,0 +1,11 @@
+Things to do: (as of 07-27-2011 16:47 CST)
+
+*Create a README with specific information regarding the purpose of genalyze
+*Implement a versioning system and host release tar balls on a file hosting service. 
+*Create a working ebuild
+*Add important modules
+*Implement command line switches for enabling / disabling modules to be executed
+*Implement option to use wgetpaste only, print to screen, or both wgetpaste and print to screen
+*Clean up script and make output more user oriented and elegant
+*Add an option for user to input their specific problem and add it to the beginning of $OUT_TMP
+
