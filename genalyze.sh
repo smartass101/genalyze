@@ -109,8 +109,8 @@ while [ $# -gt 0 ] ; do
             echo "-o, --omit <module_identifiers>       Do not execute specified modules"
             echo "-w, --with-only <module_identifiers>  Execute explicitly only these modules"
             echo "-d, --no-upload                       Do not upload the file with information"
-            echo "-r, --read-only                        Only display the file with information"
-            echo "-l, --list                             List available modules and exit"
+            echo "-r, --read-only                       Only display the file with information"
+            echo "-l, --list                            List available modules and exit"
             exit 0;;
         -n|--non-interactive)
             INTERACTIVE=0
