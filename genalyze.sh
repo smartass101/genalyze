@@ -105,11 +105,10 @@ while [ $# -gt 0 ] ; do
             "
             echo "Options:"
             echo "-h, --help                            Display this message and exit"
-            echo "-n, --non-interactive                 Do not ask questions, assume default values"
+            echo "-n, --non-interactive                 Do not ask questions, assume default values, upload"
             echo "-o, --omit <module_identifiers>       Do not execute specified modules"
             echo "-w, --with-only <module_identifiers>  Execute explicitly only these modules"
-            echo "-d, --no-upload                       Do not upload the file with information"
-            echo "-r, --read-only                       Only display the file with information"
+            echo "-r, --read-only                       Only display the file with information, don't upload"
             echo "-l, --list                            List available modules and exit"
             exit 0;;
         -n|--non-interactive)
