@@ -129,21 +129,21 @@ while [ $# -gt 0 ] ; do
             done
             exit 0;;
         -w|--with-only)
-            while [ $1 -ne /-.*/ ] ; do
+            shift
+            analyze_array=()
+            analyze_opt_array=()
+            query_array=()
+            until [[ $1 =~ -.* || $# -eq 0 ]] ; do
                 analyze_array=( ${analyze_array[@]} $1 )
-                analyze_opt_array=( ${analyze_array[@]} $1 )
-                query_array=( ${analyze_array[@]} $1 )
                 shift
             done;;
-
         -o|--omit)
-            while [ $1 -ne /-.*/ ] ; do
-                eval analyze_array=\${analyze_array#$1}
-                eval analyze_opt_array=\${analyze_array#$1}
-                eval query_array=\${analyze_array#$1}
+            until [[ $1 =~ -.* ]] ; do
+                analyze_array=${analyze_array#$1}
+                analyze_opt_array=${analyze_array#$1}
+                query_array=${analyze_array#$1}
                 shift
             done;;
-           
         *)
             echo ">>> unknown option, try --help"
             exit 1;;
