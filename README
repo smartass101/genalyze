@@ -12,6 +12,12 @@ eliminate possible problems the user is experiencing.  Genalyze is developed for
 troubleshooting of Gentoo installs, however it may or may not be useful for other 
 distributions based on Gentoo such as Funtoo or Sabayon. 
 
+Ebuild:
+
+Genalyze is not currently in portage or in any overlay's however you are encouraged to 
+add a local port overlay and test the ebuild which is in the ebuild/ directory in the tarball
+please bring it to the genalyze developer's attention any problems you may experience
+while trying to use the ebuild, so we can get it into portage sooner :)
 
 
 Usage:

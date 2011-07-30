@@ -5,7 +5,7 @@ inherit eutils
 
 DESCRIPTION="A tool used to gather system information and paste it online"
 HOMEPAGE="https://github.com/smartass101/genalyze"
-SRC_URI=""
+SRC_URI="http://downloads.sourceforge.net/project/gentoo-genalyze/genalyze/genalyze-0.0.1.tar.bz2"
 
 LICENSE="GPL-2"
 SLOT="0"
@@ -25,6 +25,6 @@ src_unpack() {
 
 
 src_install() {
-	mv genalyze.sh genalyze
+	dodoc README LICENSE
 	dobin genalyze || die
 }
