@@ -30,17 +30,16 @@ function analyze
 function analyze_opt 
 {
     while true ; do
-        read -p "OPTIONAL: do you want to supply this information ? << ${1} >> 
-command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
+        read -p " << ${1} >> command to be run: \" ${2} \"   ANSWER: Y/n :  "
         case ${REPLY} in
-            y) 
+            y|Y|"") 
                 echo "############################## ${1} ##############################" >> "${out_tmp}"
                 echo -e "--->>>command executed: ${2}\n" >> "${out_tmp}"
                 $2 >> "${out_tmp}" 2>>"${out_tmp}"
                 echo -e "\n\n" >> "${out_tmp}"
                 break;;
-            n)
-                echo "skipping module << ${1} >>"
+            n|N)
+                echo ">>> skipping module << ${1} >>"
                 break;;
             *)
                 echo ">>> didn't understand you, type 'y' or 'n'";;
@@ -164,6 +163,7 @@ for mod in ${analyze_array[@]}; do
     analyze "${name}" "${command}"
 done
 #analyze_opt()
+echo -e ">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.\n>>> You may just hit <ENTER> which defaults to answering 'yes'."
 for mod in ${analyze_opt_array[@]}; do
     eval name=\${$mod[0]} 
     eval command=\${$mod[1]}
