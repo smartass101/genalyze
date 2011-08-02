@@ -186,7 +186,7 @@ elif [ $readonly -eq 1 ] ; then
     less "${out_tmp}"
 else
     while true ; do
-        read -p ">>> What do you want to do now? 
+        read -n 1 -e -p ">>> What do you want to do now? 
         [u]pload system info file through wgetpaste
         [r]ead the file with 'less'
         [q]uit
