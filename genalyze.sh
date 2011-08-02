@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #genalyze.sh
 #this script gathers some data about your system and pastes them online 
 #for other people, so that they can help you with your problem
