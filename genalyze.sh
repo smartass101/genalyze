@@ -9,21 +9,21 @@
 PATH="${PATH}:/usr/sbin:/sbin" #this is needed for utils like lspci
 
 
-OUT_TMP="/tmp/genalyze_output_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
-INTERACTIVE=1
-READONLY=0
+out_tmp="/tmp/genalyze_output_$(date +%d%m%y_%H%M%S).txt" #the temporary file to be pasted online
+interactive=1
+readonly=0
 
-2>>$OUT_TMP #redirect stderr to the file (like 'command not found')
+2>>"${out_tmp}" #redirect stderr to the file (like 'command not found')
 
 ######################<< MODULE CLASSES (well, just bash functions,really) >>##############
 
 #this function takes two arguments: analyze(comment_on_the_module, command_to_generate_desired_output)
 function analyze 
 {
-    echo "############################## ${1} ##############################" >> $OUT_TMP
-    echo -e "--->>>command executed: ${2}\n" >> $OUT_TMP
-    $2 >> $OUT_TMP 2>>$OUT_TMP
-    echo -e "\n\n" >> $OUT_TMP
+    echo "############################## ${1} ##############################" >> "${out_tmp}"
+    echo -e "--->>>command executed: ${2}\n" >> "${out_tmp}"
+    $2 >> "${out_tmp}" 2>> "${out_tmp}"
+    echo -e "\n\n" >> "${out_tmp}"
 }
 
 #this function takes arguments like (module), but asks if they should be run
@@ -34,10 +34,10 @@ function analyze_opt
 command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
         case ${REPLY} in
             y) 
-                echo "############################## ${1} ##############################" >> $OUT_TMP
-                echo -e "--->>>command executed: ${2}\n" >> $OUT_TMP
-                $2 >> $OUT_TMP 2>>$OUT_TMP
-                echo -e "\n\n" >> $OUT_TMP
+                echo "############################## ${1} ##############################" >> "${out_tmp}"
+                echo -e "--->>>command executed: ${2}\n" >> "${out_tmp}"
+                $2 >> "${out_tmp}" 2>>"${out_tmp}"
+                echo -e "\n\n" >> "${out_tmp}"
                 break;;
             n)
                 echo "skipping module << ${1} >>"
@@ -52,10 +52,10 @@ command to be run: ${2}   ANSWER: type 'y' or 'n' :  "
 function query
 {
     read -p "PLEASE ANSWER (type,then press ENTER): ${2} ?  "
-    echo "############################## ${1} ##############################" >> $OUT_TMP
-    echo -e "--->>> question asked: ${2}\n" >> $OUT_TMP
-    echo $REPLY >> $OUT_TMP
-    echo -e "\n\n" >> $OUT_TMP
+    echo "############################## ${1} ##############################" >> "${out_tmp}"
+    echo -e "--->>> question asked: ${2}\n" >> "${out_tmp}"
+    echo $REPLY >> "${out_tmp}"
+    echo -e "\n\n" >> "${out_tmp}"
 }
     
 ###############################<< MODULE DECLARATION >>################################
@@ -112,7 +112,7 @@ while [ $# -gt 0 ] ; do
             echo "-l, --list                            List available modules and exit"
             exit 0;;
         -n|--non-interactive)
-            INTERACTIVE=0
+            interactive=0
             analyze_opt_array=()
             query_array=()
             shift;;
@@ -120,7 +120,7 @@ while [ $# -gt 0 ] ; do
             UPLOAD=0
             shift;;
         -r|--read-only)
-            READONLY=1
+            readonly=1
             shift;;
         -l|--list)
             list_array=( ${analyze_array[@]} ${analyze_opt_array[@]} ${query_array[@]} )
@@ -177,13 +177,13 @@ for mod in ${query_array[@]}; do
 done
 
 ########################<<ENDING SEQUENCE>>#############################
-echo ">>> your system info is at ${OUT_TMP}"
+echo ">>> your system info is at ${out_tmp}"
 
-if [ $INTERACTIVE -eq 0 ] ; then
-    wgetpaste $OUT_TMP
+if [ $interactive -eq 0 ] ; then
+    wgetpaste "${out_tmp}"
     exit 0
-elif [ $READONLY -eq 1 ] ; then
-    less $OUT_TMP
+elif [ $readonly -eq 1 ] ; then
+    less "${out_tmp}"
 else
     while true ; do
         read -p ">>> What do you want to do now? 
@@ -193,9 +193,9 @@ else
         ANSWER: type 'u' or 'r' or 'q' :  "
         case $REPLY in
             u)
-                wgetpaste $OUT_TMP;;
+                wgetpaste "${out_tmp}";;
             r)
-                less $OUT_TMP;;
+                less "${out_tmp}";;
             q)
                 break;;
             *)
