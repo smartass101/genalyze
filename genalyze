@@ -204,7 +204,8 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
 done
 
 if ((bad_module)); then
-    echo $"** Known modules:""$EOL  ${!data[*]}$EOL**" >&2
+    IFS=$EOL read -d '' -a list < <(printf '%s\n' "${!data[@]}"| sort)
+    echo $"** Known modules:""$EOL  ${list[*]}$EOL**" >&2
     exit 1
 fi
 
@@ -233,11 +234,15 @@ for mod in "${!analyze_array[@]}"; do
     analyze "${analyze_array["$mod"]}" "${data["$mod"]}"
 done
 #analyze_opt()
-echo $">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.$EOL>>> You may just hit <ENTER> which defaults to answering 'yes'."
 for mod in "${!analyze_opt_array[@]}"; do
-    [[ ${data["$mod"]} ]] || continue
-    analyze_opt "${analyze_opt_array["$mod"]}" "${data["$mod"]}"
+    [[ ${data["$mod"]} ]] || unset "analyze_opt_array[$mod]"
 done
+if ((${#analyze_opt_array[*]})); then
+    echo $">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.$EOL>>> You may just hit <ENTER> which defaults to answering 'yes'."
+    for mod in "${!analyze_opt_array[@]}"; do
+        analyze_opt "${analyze_opt_array["$mod"]}" "${data["$mod"]}"
+    done
+fi
 #query()
 for mod in "${!query_array[@]}"; do
     [[ ${data["$mod"]} ]] || continue
