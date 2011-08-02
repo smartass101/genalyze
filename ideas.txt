@@ -8,4 +8,27 @@ mingdao:
 godmachine-x6
     http://bobshaffer.net/?section=project_noobjuice_viewer
         noobjuice maybe some inspiration
+31072011
+    when asking fro optional modules, after just pressing enter, deafualts to Y (or don't wait for enter, but I don't like that)
+        but not waiting for enter could be for the ending sequence
+    ask "are there any comment lines that are special? " if no, grep them out
+    print echo $VAR literaly  without variable substitution in module desc
+    first echo $DESKTOP_SESSION, than ask for wM if nothing conatined in that var
+    implement -nr ... dump to less (read only non interacive)
+    change -n to -nu (upload only non interactive)
+    print out "processing" to hide lag...or see /-\-/ spin
+    fisrt say "these are optional" than ask for each of opt modules
+        The following questions are all OPTIONAL! Answer (Y)es if you would like to supply this information ?
+        Each question is DEFAULTED to Y so you may just tap <ENTER> to continue or N if you prefer not to include 
+        this info.
 
+        << Exported shell variables >>		Y/N	_
+        << Disk Usage & Statistics >> 		Y/N	_		(this is missing in the newest version)
+        << Exported shell variables >>		Y/N	_
+        << Network status >>			Y/N	_
+        << Routing Tables >>			Y/N	_
+        << DNS Servers >>			Y/N	_
+    add modules: opt=(groups) analyze=(CHOST 
+        oh yeah! another 'in the middle of the night though'....  cat /proc/cpuinfo & cat /proc/meminfo & free -m
+        <Griz64> we're going to be looking at the CHOST= line and it's tough to know if it's right, if we do NOT know what proc is really in the box.
+        <Griz64> groups would be handy as well
