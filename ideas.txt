@@ -32,3 +32,5 @@ godmachine-x6
         oh yeah! another 'in the middle of the night though'....  cat /proc/cpuinfo & cat /proc/meminfo & free -m
         <Griz64> we're going to be looking at the CHOST= line and it's tough to know if it's right, if we do NOT know what proc is really in the box.
         <Griz64> groups would be handy as well
+
+compare CFLAGs, CHOST with /proc/cpuinfo or smth 
