@@ -80,6 +80,7 @@ wm=("Window Manager / Desktop Environment Information" "what Desktop environment
 exported=("Exported shell variables" "export")
 username=("Username" "echo ${USER}")
 hostname=("Hostname" "echo ${HOSTNAME}")
+groups=("Group Membership" "groups")
 ifconfig=("Network status" "ifconfig")
 route=("Routing Tables" "route")
 dns=("DNS Servers" "cat /etc/resolv.conf")
@@ -88,7 +89,7 @@ dns=("DNS Servers" "cat /etc/resolv.conf")
 #######################################<<MODULE ARRAYS>>################################
 #format: class_array=( module_identifier_1 module_identifier_2 .. )
 analyze_array=(rc_status fstab du makeconf portage profiles kernel hardware modules udev dbus consolekit username hostname)
-analyze_opt_array=(exported ifconfig route dns)
+analyze_opt_array=(exported groups ifconfig route dns)
 query_array=(wm)
 
 
