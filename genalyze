@@ -164,17 +164,17 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
             header $"command executed by module"
             for mod in "${!analyze_array[@]}"; do
                 echo  "$mod  ::  ${analyze_array["$mod"]}  ::  ${data["$mod"]}"
-            done
+            done | LC_ALL=C sort -k 1
             echo "$EOL"$"** User-confirmed modules"
             header $"command executed by module"
             for mod in "${!analyze_opt_array[@]}"; do
                 echo  "$mod  ::  ${analyze_opt_array["$mod"]}  ::  ${data["$mod"]}"
-            done
+            done | LC_ALL=C sort -k 1
             echo "$EOL"$"** General questions with text answer to upload"
             header $"question asked by module"
             for mod in "${!query_array[@]}"; do
                 echo  "$mod  ::  ${query_array["$mod"]}  ::  ${data["$mod"]}"
-            done
+            done | LC_ALL=C sort -k 1
             #TODO make a table layout
             exit 0;;
         -w|--with-only)
@@ -204,7 +204,7 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
 done
 
 if ((bad_module)); then
-    IFS=$EOL read -d '' -a list < <(printf '%s\n' "${!data[@]}"| sort)
+    IFS=$EOL read -d '' -a list < <(printf '%s\n' "${!data[@]}"| LC_ALL=C sort)
     echo $"** Known modules:""$EOL  ${list[*]}$EOL**" >&2
     exit 1
 fi
