@@ -1,0 +1,281 @@
+#!/bin/bash
+#genalyze
+#this script gathers some data about your system and pastes them online 
+#for other people, so that they can help you with your problem
+# this script is perfectly safe if run as normal user, you may need to be root
+# to emerge wgetpaste though 
+
+PATH="$PATH:/usr/sbin:/sbin" #this is needed for utils like lspci
+
+out_tmp="/tmp/genalyze_output_$(date +%Y%m%d_%H%M%S).txt" #the temporary file to be pasted online
+    
+#######################################<<MODULE ARRAYS>>################################
+# we keep class arrays, keyed by module_identifier, which hold the description
+# each array is used for the functions named below by removing _array from the name
+declare -A analyze_array analyze_opt_array query_array
+
+#format: class_array=([module_identifier_1]=$"module description" [module_identifier_2]=$".." ..)
+# module_identifier: short, no whitespace (used for referencing from command-line)
+# module description: capitalised, and no abbreviations please, should be understandable for everyone
+# $".." as in: $"user displayed text" allows us to localize strings when we choose
+# NB: you must also place the command (or query string) in the data array below
+
+# standard modules run by analyze()
+analyze_array=(
+    [rc_status]=$"RC Run Level Settings" [fstab]=$"Fstab Settings"
+    [du]=$"Disk Usage & Statistics" [makeconf]=$"Settings from /etc/make.conf"
+    [portage]=$"General Portage Information" [profiles]=$"Display of Portage Profiles"
+    [kernel]=$"Kernel in use" [hardware]=$"PCI Hardware" [modules]=$"Kernel Modules Currently Loaded"
+    [udev]=$"UDEV Rules" [dbus]=$"DBUS Session Information" [consolekit]=$"Consolekit Session Information"
+    [username]=$"Username" [hostname]=$"Hostname"
+  # [yourModule]=$"Description"
+) # <- do not delete this bracket
+
+# ask user whether s/he wants to send this information via analyze_opt()
+analyze_opt_array=(
+    [exported]=$"Exported shell variables" [ifconfig]=$"Network status"
+    [route]=$"Routing Tables" [dns]=$"DNS Servers"
+  # [yourModule]=$"Description"
+) # <- do not delete
+
+# [description of] questions to put to user; text entered used as answer
+query_array=(
+    [wm]=$"Window Manager / Desktop Environment Information"
+  # [yourQuery]=$"Description"
+) # <- do not delete
+
+#######################################<<MODULE DATA>>##################################
+# format: data[module_identifier]='command to be executed' or $"question to be asked"
+declare -A data
+data=(
+    [rc_status]='rc-status' [fstab]='cat /etc/fstab' [du]='df -hT' [makeconf]='cat /etc/make.conf'
+    [portage]="emerge --info" [profiles]='eselect profile list' [kernel]='eselect kernel list'
+    [hardware]='lspci -k' [modules]='lsmod' [udev]='ls -1 /etc/udev/rules.d/'
+    [dbus]="echo $DBUS_SESSION_BUS_ADDRESS" [consolekit]='ck-list-sessions'
+    [username]="echo $USER" [hostname]="echo $HOSTNAME"
+    [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat /etc/resolv.conf'
+    [wm]=$"what Desktop environment and/or Window manager are you using"
+  # [yourModule]='command -opts /some/path'
+  # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
+  # [yourQuery]=$"question string"
+) # <- do not delete
+
+declare -i interactive=1 read_only=0
+declare -r EOL=$'\n' # newline so we can avoid echo -e
+
+# 2>>"$out_tmp" #redirect stderr to the file (like 'command not found')
+# the above doesn't change anything in context of the script
+# to do this you have to use exec tho i'd suggest > not >> at start of script, so:
+# exec 2>"$out_tmp" || { echo "Unable to open tmp file" >&2; exit 1; }
+# thing is we echo to stderr, so above isn't useful imo, unless we dup fds. [igli]
+
+######################<< MODULE CLASSES (well, just bash functions,really) >>##############
+
+#this function takes two arguments: analyze(comment_on_the_module, command_to_generate_desired_output)
+analyze() {
+    echo "############################## $1 ##############################"
+    echo $"--->>>command executed: $2""$EOL"
+    $2 2>&1
+    echo "$EOL$EOL"
+} >> "$out_tmp"
+
+#this function takes arguments like (module), but asks if they should be run
+analyze_opt() {
+    while true ; do
+        read -p $" << $1 >> command to be run: \" $2 \"   ANSWER: Y/n :  "
+        case $REPLY in
+            [yY]|'')
+            {   echo "############################## $1 ##############################"
+                echo $"--->>>command executed: $2""$EOL"
+                $2 2>&1
+                echo "$EOL$EOL"
+            } >> "$out_tmp"
+                break;;
+            [nN])
+                echo $"skipping module: << $1 >>"
+                break;;
+            *)
+                echo $">>> didn't understand you, type 'y' or 'n'";;
+        esac 
+   done
+}
+
+#this function just asks the user about stuff, takes two arguments: query(module_name, the_question_to_the_user)
+query() {
+    read -p $"PLEASE ANSWER (type,then press ENTER): $2 ?  "
+    echo "############################## $1 ##############################" >> "$out_tmp"
+    echo $"--->>> question asked: $2""$EOL$EOL$REPLY$EOL$EOL" >> "$out_tmp"
+}
+
+# check to make sure all modules listed in class arrays have a corresponding data item
+# we do this as user can omit modules, which we indicate by removing them from the data array
+sanityCheck() {
+    local n missing=()
+    for mod in "${!analyze_array[@]}" "${!analyze_opt_array[@]}" "${!query_array[@]}"; do
+        [[ ${data["$mod"]} ]] || missing+=("$mod")
+    done
+    n=${#missing[*]}
+    case $n in
+    0) return
+;;  1) echo $"! Module $missing is missing."
+;;  *) echo $"! $n modules missing: ${missing[*]}"
+;;  esac >&2
+    exit 2
+}
+sanityCheck
+
+##########################<< COMMAND LINE OPTIONS PROCESSING >>#######################
+
+declare -A new_data
+omit=()
+declare -i bad_module=0
+while (($#)); do
+    case $1 in
+        -[h?]|--help)
+            echo $"This bash script gathers information about your system and (optionally) uploads it
+through wgetpaste. It is intended for support purposes on the #gentoo IRC support channel""$EOL"
+
+            echo $"Usage: ${0##*/} [options]""$EOL"
+
+            echo $"Options:"
+            echo '-h, --help                            '$"Display this message and exit"
+            echo '-n, --non-interactive                 '$"Do not ask questions, assume default values, upload"
+            echo '-o, --omit '$"<module_identifiers>"'       '$"Do not execute specified modules"
+            echo '-w, --with-only '$"<module_identifiers>"'  '$"Execute explicitly only these modules"
+            echo '-r, --read-only                       '$"Only display the file with information, don't upload"
+            echo '-l, --list                            '$"List available modules and exit"
+            exit 0;;
+        -n|--non-interactive)
+            interactive=0
+            analyze_opt_array=()
+            query_array=()
+            shift;;
+        -d|--no-upload)
+            upload=0
+            shift;;
+        -r|--read-only)
+            read_only=1
+            shift;;
+        -l|--list)
+            header() {
+                echo $"<module identifier> :: <module description> :: <$1>"
+            }
+            echo $"** Standard modules"
+            header $"command executed by module"
+            for mod in "${!analyze_array[@]}"; do
+                echo  "$mod  ::  ${analyze_array["$mod"]}  ::  ${data["$mod"]}"
+            done | LC_ALL=C sort -k 1
+            echo "$EOL"$"** User-confirmed modules"
+            header $"command executed by module"
+            for mod in "${!analyze_opt_array[@]}"; do
+                echo  "$mod  ::  ${analyze_opt_array["$mod"]}  ::  ${data["$mod"]}"
+            done | LC_ALL=C sort -k 1
+            echo "$EOL"$"** General questions with text answer to upload"
+            header $"question asked by module"
+            for mod in "${!query_array[@]}"; do
+                echo  "$mod  ::  ${query_array["$mod"]}  ::  ${data["$mod"]}"
+            done | LC_ALL=C sort -k 1
+            #TODO make a table layout
+            exit 0;;
+        -w|--with-only)
+            shift
+            until [[ $1 = -* || $# -eq 0 ]] ; do
+                if [[ ${data["$1"]} ]]; then
+                    new_data["$1"]=${data["$1"]}
+                else bad_module=1
+                    echo $"! Unknown module: $1" >&2
+                fi
+                shift
+            done
+;;      -o|--omit)
+            shift
+            until [[ $1 = -* || $# -eq 0 ]] ; do
+                if [[ ${data["$1"]} ]]; then
+                    omit+=("$1")
+                else bad_module=1
+                    echo $"! Unknown module: $1" >&2
+                fi
+                shift
+            done;;
+        *)
+            echo $">>> unknown option, try --help"
+            exit 1;;
+    esac
+done
+
+if ((bad_module)); then
+    IFS=$EOL read -d '' -a list < <(printf '%s\n' "${!data[@]}"| LC_ALL=C sort)
+    echo $"** Known modules:""$EOL  ${list[*]}$EOL**" >&2
+    exit 1
+fi
+
+if ((${#new_data[*]})); then
+    data=()
+    for mod in "${!new_data[@]}"; do
+        data["$mod"]=${new_data["$mod"]}
+    done
+fi
+
+if ((${#omit[*]})); then
+    for mod in "${omit[@]}"; do
+        unset "data[$mod]"
+    done
+fi
+unset new_data omit bad_module
+
+##################################<<MODULE EXECUTION>>##############################3
+#loops over class arrays and executes functions
+
+echo $">>> Starting the genalyze script, collecting system information ..." 
+
+#analyze()
+for mod in "${!analyze_array[@]}"; do
+    [[ ${data["$mod"]} ]] || continue
+    analyze "${analyze_array["$mod"]}" "${data["$mod"]}"
+done
+#analyze_opt()
+for mod in "${!analyze_opt_array[@]}"; do
+    [[ ${data["$mod"]} ]] || unset "analyze_opt_array[$mod]"
+done
+if ((${#analyze_opt_array[*]})); then
+    echo $">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.$EOL>>> You may just hit <ENTER> which defaults to answering 'yes'."
+    for mod in "${!analyze_opt_array[@]}"; do
+        analyze_opt "${analyze_opt_array["$mod"]}" "${data["$mod"]}"
+    done
+fi
+#query()
+for mod in "${!query_array[@]}"; do
+    [[ ${data["$mod"]} ]] || continue
+    query "${query_array["$mod"]}" "${data["$mod"]}"
+done
+
+########################<<ENDING SEQUENCE>>#############################
+echo $">>> your system info is at $out_tmp"
+
+if ((!interactive)); then
+    wgetpaste "$out_tmp"
+    exit 0
+elif ((read_only)); then
+    less "$out_tmp"
+else
+    while true ; do
+        read -n 1 -e -p $">>> What do you want to do now? 
+        [u]pload system info file through wgetpaste
+        [r]ead the file with 'less'
+        [q]uit
+        ANSWER: type 'u' or 'r' or 'q' :  "
+        case $REPLY in
+            [uU])
+                wgetpaste "$out_tmp";;
+            [rR])
+                less "$out_tmp";;
+            [qQ])
+                break;;
+            *)
+                echo $"couldn't understand you, try again";;
+        esac
+    done
+fi
+
+echo $"    >>> Thank you for your cooperation :) <<<   "
+exit 0

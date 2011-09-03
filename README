@@ -1,0 +1,67 @@
+About Genalyze:
+
+Genalyze is developed as a troubleshooting tool to help the Gentoo community
+further support users by gathering system information relating to the machine 
+in question. This tool does not make any changes to the file system other than 
+generating txt files for the user to reference. The concept is to assist the 
+troubleshooters in obtaining information they need in order to resolve the issue
+at hand. This will generate lots of information regarding the system, without 
+the need to ask the user to do each individual step to obtain information one 
+step at a time. The idea is to decrease the amount of time it takes to find and 
+eliminate possible problems the user is experiencing.  Genalyze is developed for
+troubleshooting of Gentoo installs, however it may or may not be useful for other 
+distributions based on Gentoo such as Funtoo or Sabayon. 
+
+Ebuild:
+
+Genalyze is not currently in portage or in any overlay's however you are encouraged to 
+add a local port overlay and test the ebuild which is in the ebuild/ directory in the tarball
+please bring it to the genalyze developer's attention any problems you may experience
+while trying to use the ebuild, so we can get it into portage sooner :)
+
+
+Usage:
+
+  Syntax: genalyze [options]
+ 	
+ Options:
+
+ -h, --help                            Display this message and exit
+
+ -n, --non-interactive                 Do not ask question, assume default values
+
+ -o, --omit <module_identifiers>       Do not execute specified modules
+ 
+ -w, --with-only <module_identifiers>  Execute explicitly only these modules
+ 
+ -d, --no-upload                       Do not upload the file with information
+	
+ -r,--read-only                        Only display the file with information
+	
+ -l,--list                             List available modules and exit
+
+
+Security Concerns:
+
+Some users may be concerned that their system information shouldn't be shared publicly. 
+This is understandable to the developers of Genalyze too. We are providing users the option 
+to paste their information to a public pasting service, or if they wish to provide the 
+information to others by a different method the user can simply choose not to upload the 
+information.  The system information can be found in /tmp  the filename containing the information
+will be genalyze_{TIMESTAMP}.txt   where {TIMESTAMP} refers to the date + time the information
+was generated. 
+
+
+Questions, Comments, and/or Concerns:
+
+You may contact us on Freenode IRC (irc.freenode.net) in the channel #gentoo-genalyze  
+
+
+*Please don't ask questions regarding the use of Genalyze in #gentoo as this script is not officially 
+supported by #gentoo at this time. However feel free to share your output of Genalyze anywhere you 
+need support for your gentoo based system :) 
+
+Enjoy!! 
+
+
+
