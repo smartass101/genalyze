@@ -60,7 +60,7 @@ data=(
   # [yourQuery]=$"question string"
 ) # <- do not delete
 
-declare -i interactive=1 read_only=0
+declare -i interactive=0 read_only=0
 declare -r EOL=$'\n' # newline so we can avoid echo -e
 
 # 2>>"$out_tmp" #redirect stderr to the file (like 'command not found')
@@ -237,11 +237,15 @@ done
 for mod in "${!analyze_opt_array[@]}"; do
     [[ ${data["$mod"]} ]] || unset "analyze_opt_array[$mod]"
 done
-if ((${#analyze_opt_array[*]})); then
-    echo $">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.$EOL>>> You may just hit <ENTER> which defaults to answering 'yes'."
-    for mod in "${!analyze_opt_array[@]}"; do
-        analyze_opt "${analyze_opt_array["$mod"]}" "${data["$mod"]}"
-    done
+if ((interactive)); then
+    if ((${#analyze_opt_array[*]})); then
+        echo $">>> The following modules are optional. Answer [y]es if you would like to supply this information or [n]o if not.$EOL>>> You may just hit <ENTER> which defaults to answering 'yes'."
+        for mod in "${!analyze_opt_array[@]}"; do
+            analyze_opt "${analyze_opt_array["$mod"]}" "${data["$mod"]}"
+        done
+    fi
+else
+    echo $">>> WARNING: running in NON-interactive mode, use the '-i' command-line switch for selecting optional modules in interactive mode$EOL>>>or use the '-w' switch to explicitly specify modules"
 fi
 #query()
 for mod in "${!query_array[@]}"; do
