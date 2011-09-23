@@ -145,10 +145,8 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
             echo '-r, --read-only                       '$"Only display the file with information, don't upload"
             echo '-l, --list                            '$"List available modules and exit"
             exit 0;;
-        -n|--non-interactive)
-            interactive=0
-            analyze_opt_array=()
-            query_array=()
+        -i|--interactive)
+            interactive=1
             shift;;
         -d|--no-upload)
             upload=0
