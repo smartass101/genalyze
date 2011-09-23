@@ -257,11 +257,14 @@ fi
 ########################<<ENDING SEQUENCE>>#############################
 echo $">>> your system info is at $out_tmp"
 
+if ((read_only)); then
+    less "$out_tmp"
+    exit 0
+fi
+
 if ((!interactive)); then
     wgetpaste "$out_tmp"
     exit 0
-elif ((read_only)); then
-    less "$out_tmp"
 else
     while true ; do
         read -n 1 -e -p $">>> What do you want to do now? 
