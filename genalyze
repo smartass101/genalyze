@@ -212,7 +212,6 @@ if ((${#new_data[*]})); then
     for mod in "${!new_data[@]}"; do
         data["$mod"]=${new_data["$mod"]}
         [[ ${analyze_opt_array["$mod"]} ]] && analyze_array["$mod"]=${analyze_opt_array["$mod"]}
-        echo $interactive
         [[ ${query_array["$mod"]} ]] && [[ $interactive -eq 0 ]] && echo $"Running in NON-interactive mode, therefore query modules aren't allowed.$EOL Use also the '-i' command-line switch if you want to specify query modules with the '-w' command-line switch" && exit 1
     done
 fi
