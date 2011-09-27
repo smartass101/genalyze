@@ -159,6 +159,7 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
             echo '-r, --read-only                       '$"Only display the file with information, don't upload"
             echo '-l, --list                            '$"List available modules and exit"
             echo '-c, --report-comments                 '$"Do not remove comments from the reported files"
+            echo '-C, --clean                           '$"Remove all report files created by the script"
             exit 0;;
         -i|--interactive)
             interactive=1
@@ -213,6 +214,9 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
         -c|--report-comments)
             comments=1
             shift;;
+        -C|--clean)
+            rm /tmp/genalyze_output_*.txt
+            exit 0;;
         *)
             echo $">>> unknown option, try --help"
             exit 1;;
