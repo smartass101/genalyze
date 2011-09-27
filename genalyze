@@ -31,6 +31,7 @@ analyze_array=(
     [udev]=$"UDEV Rules" [dbus]=$"DBUS Session Information" [consolekit]=$"Consolekit Session Information"
     [username]=$"Username" [hostname]=$"Hostname"
     [uname]=$"General Information about the System"
+    [cpuinfo]=$"CPU Information"
   # [yourModule]=$"Description"
 ) # <- do not delete this bracket
 
@@ -59,6 +60,7 @@ data=(
     [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat_file /etc/resolv.conf'
     [wm]=$"what Desktop environment and/or Window manager are you using"
     [uname]='uname -a'
+    [cpuinfo]='cat /proc/cpuinfo'
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
   # [yourQuery]=$"question string"
