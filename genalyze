@@ -30,7 +30,7 @@ analyze_array=(
     [kernel]=$"Kernel in use" [hardware]=$"PCI Hardware" [modules]=$"Kernel Modules Currently Loaded"
     [udev]=$"UDEV Rules" [dbus]=$"DBUS Session Information" [consolekit]=$"Consolekit Session Information"
     [username]=$"Username" [hostname]=$"Hostname"
-    [uname]=$"General Information about the System"
+    [uname]=$"General Information about the System" [mounted]=$"Mounted Filesystems"
     [cpuinfo]=$"CPU Information"
   # [yourModule]=$"Description"
 ) # <- do not delete this bracket
@@ -59,7 +59,7 @@ data=(
     [username]="echo $USER" [hostname]="echo $HOSTNAME"
     [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat_file /etc/resolv.conf'
     [wm]=$"what Desktop environment and/or Window manager are you using"
-    [uname]='uname -a'
+    [uname]='uname -a' [mounted]='mount -l'
     [cpuinfo]='cat /proc/cpuinfo'
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
