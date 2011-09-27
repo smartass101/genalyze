@@ -48,12 +48,12 @@ query_array=(
 # format: data[module_identifier]='command to be executed' or $"question to be asked"
 declare -A data
 data=(
-    [rc_status]='rc-status' [fstab]='cat_file /etc/fstab' [du]='df -hT' [makeconf]='cat_file /etc/make.conf'
+    [rc_status]='rc-status' [fstab]='cat /etc/fstab' [du]='df -hT' [makeconf]='cat /etc/make.conf'
     [portage]="emerge --info" [profiles]='eselect profile list' [kernel]='eselect kernel list'
     [hardware]='lspci -k' [modules]='lsmod' [udev]='ls -1 /etc/udev/rules.d/'
     [dbus]="echo $DBUS_SESSION_BUS_ADDRESS" [consolekit]='ck-list-sessions'
     [username]="echo $USER" [hostname]="echo $HOSTNAME"
-    [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat_file /etc/resolv.conf'
+    [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat /etc/resolv.conf'
     [wm]=$"what Desktop environment and/or Window manager are you using"
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
@@ -68,14 +68,6 @@ declare -r EOL=$'\n' # newline so we can avoid echo -e
 # to do this you have to use exec tho i'd suggest > not >> at start of script, so:
 # exec 2>"$out_tmp" || { echo "Unable to open tmp file" >&2; exit 1; }
 # thing is we echo to stderr, so above isn't useful imo, unless we dup fds. [igli]
-#####################<< HELPER FUNCTIONS >>####################################
-cat_file() { 
-    if ((comments)); then
-        cat $1
-    else
-        egrep -v "(^#|^ *$)" $1
-    fi
-}
 
 ######################<< MODULE CLASSES (well, just bash functions,really) >>##############
 
@@ -115,6 +107,8 @@ query() {
     echo $"--->>> question asked: $2""$EOL$EOL$REPLY$EOL$EOL" >> "$out_tmp"
 }
 
+#############################<< MODULE DATA OPERATORS >>######################
+
 # check to make sure all modules listed in class arrays have a corresponding data item
 # we do this as user can omit modules, which we indicate by removing them from the data array
 sanityCheck() {
@@ -132,6 +126,16 @@ sanityCheck() {
 }
 sanityCheck
 
+#exchange 'cat' for 'egrep -v "(^#|^ *$)"' so that empty lines or lines commented out with a hash are not reported
+reapComments() { 
+    for mod in "${!data[@]}"; do
+        if [[ ${data["$mod"]} = cat* ]] ; then
+            data["$mod"]=${data["$mod"]//cat/egrep -v '(^#|^ *$)'}
+            echo ${data["$mod"]//cat/'egrep -v "(^#|^ *$)"'}
+            echo ${data["$mod"]}
+        fi
+    done
+}
 ##########################<< COMMAND LINE OPTIONS PROCESSING >>#######################
 
 declare -A new_data
@@ -239,6 +243,10 @@ unset new_data omit bad_module
 #loops over class arrays and executes functions
 
 echo $">>> Starting the genalyze script, collecting system information ..." 
+
+if ((!comments)) ; then
+    reapComments
+fi
 
 #analyze()
 for mod in "${!analyze_array[@]}"; do
