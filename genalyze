@@ -48,19 +48,19 @@ query_array=(
 # format: data[module_identifier]='command to be executed' or $"question to be asked"
 declare -A data
 data=(
-    [rc_status]='rc-status' [fstab]='cat /etc/fstab' [du]='df -hT' [makeconf]='cat /etc/make.conf'
+    [rc_status]='rc-status' [fstab]='cat_file /etc/fstab' [du]='df -hT' [makeconf]='cat_file /etc/make.conf'
     [portage]="emerge --info" [profiles]='eselect profile list' [kernel]='eselect kernel list'
     [hardware]='lspci -k' [modules]='lsmod' [udev]='ls -1 /etc/udev/rules.d/'
     [dbus]="echo $DBUS_SESSION_BUS_ADDRESS" [consolekit]='ck-list-sessions'
     [username]="echo $USER" [hostname]="echo $HOSTNAME"
-    [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat /etc/resolv.conf'
+    [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat_file /etc/resolv.conf'
     [wm]=$"what Desktop environment and/or Window manager are you using"
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
   # [yourQuery]=$"question string"
 ) # <- do not delete
 
-declare -i interactive=0 read_only=0
+declare -i interactive=0 read_only=0 comments=0
 declare -r EOL=$'\n' # newline so we can avoid echo -e
 
 # 2>>"$out_tmp" #redirect stderr to the file (like 'command not found')
@@ -68,6 +68,14 @@ declare -r EOL=$'\n' # newline so we can avoid echo -e
 # to do this you have to use exec tho i'd suggest > not >> at start of script, so:
 # exec 2>"$out_tmp" || { echo "Unable to open tmp file" >&2; exit 1; }
 # thing is we echo to stderr, so above isn't useful imo, unless we dup fds. [igli]
+#####################<< HELPER FUNCTIONS >>####################################
+cat_file() { 
+    if ((comments)); then
+        cat $1
+    else
+        egrep -v "(^#|^ *$)" $1
+    fi
+}
 
 ######################<< MODULE CLASSES (well, just bash functions,really) >>##############
 
@@ -139,11 +147,12 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
 
             echo $"Options:"
             echo '-h, --help                            '$"Display this message and exit"
-            echo '-i, --interactive                 '$"Ask questions, ask for optional actions"
+            echo '-i, --interactive                     '$"Ask questions, ask for optional actions"
             echo '-o, --omit '$"<module_identifiers>"'       '$"Do not execute specified modules"
             echo '-w, --with-only '$"<module_identifiers>"'  '$"Execute explicitly only these modules"
             echo '-r, --read-only                       '$"Only display the file with information, don't upload"
             echo '-l, --list                            '$"List available modules and exit"
+            echo '-c, --report-comments                 '$"Do not remove comments from the reported files"
             exit 0;;
         -i|--interactive)
             interactive=1
@@ -195,6 +204,9 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
                 fi
                 shift
             done;;
+        -c|--report-comments)
+            comments=1
+            shift;;
         *)
             echo $">>> unknown option, try --help"
             exit 1;;
