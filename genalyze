@@ -4,10 +4,12 @@
 #for other people, so that they can help you with your problem
 # this script is perfectly safe if run as normal user, you may need to be root
 # to emerge wgetpaste though 
+execution_time=$(date)
+timestamp=$(date +%Y%m%d_%H%M%S --date "$execution_time")
 
 PATH="$PATH:/usr/sbin:/sbin" #this is needed for utils like lspci
 
-out_tmp="/tmp/genalyze_output_$(date +%Y%m%d_%H%M%S).txt" #the temporary file to be pasted online
+out_tmp="/tmp/genalyze_output_${timestamp}.txt" #the temporary file to be pasted online
     
 #######################################<<MODULE ARRAYS>>################################
 # we keep class arrays, keyed by module_identifier, which hold the description
@@ -239,6 +241,7 @@ unset new_data omit bad_module
 #loops over class arrays and executes functions
 
 echo $">>> Starting the genalyze script, collecting system information ..." 
+analyze $"Time of Script Execution" "echo $execution_time"
 
 #analyze()
 for mod in "${!analyze_array[@]}"; do
