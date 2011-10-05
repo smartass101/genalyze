@@ -31,7 +31,7 @@ analyze_array=(
     [udev]=$"UDEV Rules" [dbus]=$"DBUS Session Information" [consolekit]=$"Consolekit Session Information"
     [username]=$"Username" [hostname]=$"Hostname"
     [uname]=$"General Information about the System" [mounted]=$"Mounted Filesystems"
-    [cpuinfo]=$"CPU Information"
+    [cpuinfo]=$"CPU Information" [memory]=$"Memory Usage"
   # [yourModule]=$"Description"
 ) # <- do not delete this bracket
 
@@ -60,7 +60,7 @@ data=(
     [exported]='export' [ifconfig]='ifconfig' [route]='route' [dns]='cat_file /etc/resolv.conf'
     [wm]=$"what Desktop environment and/or Window manager are you using"
     [uname]='uname -a' [mounted]='mount -l'
-    [cpuinfo]='cat /proc/cpuinfo'
+    [cpuinfo]='cat /proc/cpuinfo' [memory]='free -mt'
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
   # [yourQuery]=$"question string"
@@ -217,6 +217,7 @@ through wgetpaste. It is intended for support purposes on the #gentoo IRC suppor
         -C|--clean)
             rm /tmp/genalyze_output_*.txt
             exit 0;;
+        #TODO -a|--all)
         *)
             echo $">>> unknown option, try --help"
             exit 1;;
@@ -276,6 +277,7 @@ if ((interactive)); then
     done
 else
     echo $">>> WARNING: running in NON-interactive mode, use the '-i' command-line switch for selecting optional modules in interactive mode$EOL>>>or use the '-w' switch to explicitly specify modules"
+    #TODO should not be seen when used with -w or -o or -g ... 
 fi
 #interactive actions end
 
