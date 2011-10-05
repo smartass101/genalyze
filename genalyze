@@ -38,7 +38,7 @@ analyze_array=(
 # ask user whether s/he wants to send this information via analyze_opt()
 analyze_opt_array=(
     [exported]=$"Exported shell variables" [ifconfig]=$"Network status"
-    [route]=$"Routing Tables" [dns]=$"DNS Servers"
+    [route]=$"Routing Tables" [dns]=$"DNS Servers" [logins]=$"Users Logged In, Uptime and System Load" # TODO would it be better to split these into more modules ? could be w, uptime and cat /proc/loadavg
   # [yourModule]=$"Description"
 ) # <- do not delete
 
@@ -61,6 +61,7 @@ data=(
     [wm]=$"what Desktop environment and/or Window manager are you using"
     [uname]='uname -a' [mounted]='mount -l'
     [cpuinfo]='cat /proc/cpuinfo' [memory]='free -mt' [pstree]='pstree -A' #TODO should use -a ? or are cmd arguments too much?
+    [logins]='w'
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
   # [yourQuery]=$"question string"
