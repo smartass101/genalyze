@@ -25,8 +25,8 @@ declare -A analyze_array analyze_opt_array query_array
 # standard modules run by analyze()
 analyze_array=(
     [rc_status]=$"RC Run Level Settings" [fstab]=$"Fstab Settings"
-    [du]=$"Disk Usage & Statistics" [makeconf]=$"Settings from /etc/make.conf"
-    [portage]=$"General Portage Information" [profiles]=$"Display of Portage Profiles"
+    [du]=$"Disk Usage & Statistics" [portage]=$"General Portage Information"
+    [makeconf]=$"Settings from /etc/make.conf" [profiles]=$"Display of Portage Profiles"
     [kernel]=$"Kernel in use" [hardware]=$"PCI Hardware" [modules]=$"Kernel Modules Currently Loaded"
     [udev]=$"UDEV Rules" [dbus]=$"DBUS Session Information" [consolekit]=$"Consolekit Session Information"
     [username]=$"Username" [hostname]=$"Hostname"
