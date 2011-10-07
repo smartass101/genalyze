@@ -24,6 +24,7 @@ declare -A analyze_array analyze_opt_array query_array
 
 # standard modules run by analyze()
 analyze_array=(
+    [distro]=$"Distribution Release Information"
     [rc_status]=$"RC Run Level Settings" [fstab]=$"Fstab Settings"
     [du]=$"Disk Usage & Statistics" [portage]=$"General Portage Information"
     [makeconf]=$"Settings from /etc/make.conf" [profiles]=$"Display of Portage Profiles"
@@ -61,7 +62,7 @@ data=(
     [wm]=$"what Desktop environment and/or Window manager are you using"
     [uname]='uname -a' [mounted]='mount -l'
     [cpuinfo]='cat /proc/cpuinfo' [memory]='free -mt' [pstree]='pstree -A' #TODO should use -a ? or are cmd arguments too much?
-    [logins]='w'
+    [logins]='w' [distro]='cat_file /etc/*release*'
   # [yourModule]='command -opts /some/path'
   # [yourModule]="echo $variable. NB variables evaluated now, not when module called"
   # [yourQuery]=$"question string"
