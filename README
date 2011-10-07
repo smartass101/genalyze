@@ -1,16 +1,38 @@
+############################################################################################################
 About Genalyze:
 
 Genalyze is developed as a troubleshooting tool to help the Gentoo community
 further support users by gathering system information relating to the machine 
-in question. This tool does not make any changes to the file system other than 
-generating txt files for the user to reference. The concept is to assist the 
-troubleshooters in obtaining information they need in order to resolve the issue
-at hand. This will generate lots of information regarding the system, without 
-the need to ask the user to do each individual step to obtain information one 
-step at a time. The idea is to decrease the amount of time it takes to find and 
-eliminate possible problems the user is experiencing.  Genalyze is developed for
-troubleshooting of Gentoo installs, however it may or may not be useful for other 
-distributions based on Gentoo such as Funtoo or Sabayon. 
+in question. In short it will paste your system information to a public pastebin
+site. You may choose to run genalyze in one of 3 modes (interactive, non-interactive, 
+or manual)
+
+  *Interactive mode: This mode is invoked by the -i switch. In this mode the user
+   will be prompted with simple questions pertaining to each test that will be ran. 
+
+  *Non-interactive mode: This mode will perform all tests, and will not prompt user
+   for any input.
+
+  *Manual mode:  In this mode the user will specify the -w switch followed by a list
+   of modules (space seperated) that he/she wishes to perform a test on. 
+		<See Usage below for more details>
+
+
+This tool does not make any changes to the file system other than generating txt 
+files for the user to reference. The concept is to assist the troubleshooters in 
+obtaining information they need in order to resolve the issue at hand. This will 
+generate lots of information regarding the system when ran in non-interactive mode. 
+All modules will be ran when running in non-interactive mode.  If a user wishes 
+to be asked which modules to use then the need to ask the user to do each individual 
+step to obtain information one step at a time. The idea is to decrease the amount of
+time it takes to find and eliminate possible problems the user is experiencing. 
+Genalyze is developed for troubleshooting of Gentoo installs, however this is not 
+only limited to Gentoo, we are also incorporating support for Sabayon and Funtoo, 
+so feel free to test on those distributions. If you are interested in contributing, 
+or you have an idea/suggestion, pleasejoin us on Freenode IRC in the channel 
+#gentoo-genalyze.  We appreciate your support and hope you find this tool useful.
+
+############################################################################################################
 
 Ebuild:
 
@@ -19,6 +41,7 @@ add a local port overlay and test the ebuild which is in the ebuild/ directory i
 please bring it to the genalyze developer's attention any problems you may experience
 while trying to use the ebuild, so we can get it into portage sooner :)
 
+############################################################################################################
 
 Usage:
 
@@ -26,20 +49,66 @@ Usage:
  	
  Options:
 
- -h, --help                            Display this message and exit
+-h, --help                            Display this message and exit
 
- -n, --non-interactive                 Do not ask question, assume default values
+-i, --interactive                     Ask questions, ask for optional actions
 
- -o, --omit <module_identifiers>       Do not execute specified modules
- 
- -w, --with-only <module_identifiers>  Execute explicitly only these modules
- 
- -d, --no-upload                       Do not upload the file with information
-	
- -r,--read-only                        Only display the file with information
-	
- -l,--list                             List available modules and exit
+-o, --omit <module_identifiers>       Do not execute specified modules
 
+-w, --with-only <module_identifiers>  Execute explicitly only these modules
+
+-r, --read-only                       Only display the file with information, don't upload
+
+-l, --list                            List available modules and exit
+
+-c, --report-comments                 Do not remove comments (#'s) from the reported files
+
+-C, --clean                           Remove all report files created by the script
+
+############################################################################################################
+
+** Standard modules
+<module identifier>	::  <module description>			::  <command executed by module>
+consolekit		::  Consolekit Session Information		::  ck-list-sessions
+cpuinfo			::  CPU Information				::  cat /proc/cpuinfo
+dbus  			::  DBUS Session Information			::  echo $DBUS_SESSION_BUS_ADDRESS 
+distro  		::  Distribution Release Information  		::  cat_file /etc/*release*
+du  			::  Disk Usage & Statistics  			::  df -hT
+fstab  			::  Fstab Settings  				::  cat_file /etc/fstab
+hardware  		::  PCI Hardware  				::  lspci -k
+hostname  		::  Hostname 					::  echo $HOSTNAME
+kernel  		::  Kernel in use 				::  eselect kernel list
+makeconf  		::  Settings from /etc/make.conf  		::  cat_file /etc/make.conf
+memory  		::  Memory Usage  				::  free -mt
+modules  		::  Kernel Modules Currently Loaded  		::  lsmod
+mounted  		::  Mounted Filesystems 			::  mount -l
+portage  		::  General Portage Information  		::  emerge --info
+profiles  		::  Display of Portage Profiles  		::  eselect profile list
+pstree  		::  Process Tree 				::  pstree -A
+rc_status  		::  RC Run Level Settings  			::  rc-status
+udev  			::  UDEV Rules 					::  ls -1 /etc/udev/rules.d/
+uname  			::  General Information about the System  	::  uname -a
+username  		::  Username  					::  echo $USER
+
+############################################################################################################
+
+** User-confirmed modules
+<module identifier>	::  <module description>			::  <command executed by module>
+dns			::  DNS Servers					::  cat_file /etc/resolv.conf
+exported		::  Exported shell variables  			::  export
+ifconfig		::  Network status  				::  ifconfig
+logins			::  Users Logged In, Uptime and System Load  	::  uptime
+route			::  Routing Tables  				::  route
+
+############################################################################################################
+
+** General questions with text answer to upload
+<module identifier>	::  <module description> 			::  <question asked by module>
+wm			::  Window Manager/DE Info	  		::  what Desktop environment and/or Window manager are you using
+
+
+
+############################################################################################################
 
 Security Concerns:
 
@@ -51,6 +120,8 @@ information.  The system information can be found in /tmp  the filename containi
 will be genalyze_{TIMESTAMP}.txt   where {TIMESTAMP} refers to the date + time the information
 was generated. 
 
+
+#############################################################################################################
 
 Questions, Comments, and/or Concerns:
 
@@ -65,3 +136,4 @@ Enjoy!!
 
 
 
+############################################################################################################
